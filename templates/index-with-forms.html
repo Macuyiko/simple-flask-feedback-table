@@ -1,0 +1,46 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<h1>Simple Table with Feedback in Flask</h1>
+
+<h2>With HTML Forms</h2>
+
+<p>This version uses HTML forms without any JavaScript to save ratings. For each row, a form is created
+which will perform a POST to the backend. The backend will save the rating and redirect the user to this
+page again, which will be completely reloaded and re-rendered. Note: giving the same rating as the currently
+set one will remove it altogether.</p>
+
+<p><a href="{{ url_for('table_with_ajax') }}">Show me the JavaScript version</a>.</p>
+
+<table>
+    <thead>
+        <tr>
+            {% for f in table[0].keys() %}
+                <th>{{ f|title }}</th>
+            {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for row in table %}
+        <tr>
+            {% for f in row.keys() %}
+            <td>
+                {% if f == 'rating' %}
+                    <form action="{{ url_for('save') }}" method="post">
+                        {% for i in range(1,6) %}
+                        <input type="hidden" name="id" value="{{ row['id'] }}">
+                        <button type="submit" name="rating" value="{{ i }}"
+                                {% if row['rating'] == i %}style="background-color: yellow;"{% endif %}>{{ i }}</button>
+                        {% endfor %}
+                    </form>
+                {% else %}
+                    {{ row[f]|default('', true) }}
+                {% endif %}
+            </td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}
